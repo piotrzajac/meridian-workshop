@@ -102,11 +102,11 @@ export default {
 
 <style scoped>
 .filters-bar {
-  background: var(--color-surface-muted, #f8fafc);
-  border-bottom: 1px solid var(--color-border, #e2e8f0);
+  background: var(--color-surface-muted);
+  border-bottom: 1px solid var(--color-border);
   padding: 0.75rem 0;
   position: sticky;
-  top: 70px;
+  top: var(--nav-height);
   z-index: 90;
 }
 
@@ -135,17 +135,17 @@ export default {
 .filter-group label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--color-text-muted, #64748b);
+  color: var(--color-text-muted);
   white-space: nowrap;
 }
 
 .filter-select {
   padding: 0.4rem 0.75rem;
-  border: 1px solid var(--color-border-dark, #cbd5e1);
-  border-radius: 6px;
+  border: 1px solid var(--color-border-dark);
+  border-radius: var(--radius-sm);
   font-size: 0.813rem;
-  color: var(--color-text-dark, #0f172a);
-  background: var(--color-surface, white);
+  color: var(--color-text-dark);
+  background: var(--color-surface);
   cursor: pointer;
   transition: all 0.15s;
   font-weight: 500;
@@ -153,13 +153,13 @@ export default {
 }
 
 .filter-select:hover {
-  border-color: var(--color-text-muted, #94a3b8);
+  border-color: var(--color-text-muted);
 }
 
 .filter-select:focus {
   outline: none;
-  border-color: var(--color-primary, #3b82f6);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .reset-filters-btn {
@@ -167,19 +167,19 @@ export default {
   align-items: center;
   justify-content: center;
   padding: 0.4rem;
-  background: var(--color-surface, white);
-  border: 1px solid var(--color-border, #e2e8f0);
-  border-radius: 6px;
-  color: var(--color-text-muted, #64748b);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
   cursor: pointer;
   transition: all 0.15s;
   flex-shrink: 0;
 }
 
 .reset-filters-btn:hover:not(:disabled) {
-  background: var(--color-surface-muted, #f8fafc);
-  border-color: var(--color-border-dark, #cbd5e1);
-  color: var(--color-text-dark, #0f172a);
+  background: var(--color-surface-muted);
+  border-color: var(--color-border-dark);
+  color: var(--color-text-dark);
 }
 
 .reset-filters-btn:disabled {

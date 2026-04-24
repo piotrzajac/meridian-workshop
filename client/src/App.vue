@@ -23,7 +23,7 @@
             {{ t('nav.demandForecast') }}
           </router-link>
           <router-link to="/reports" :class="{ active: $route.path === '/reports' }">
-            Reports
+            {{ t('nav.reports') }}
           </router-link>
           <router-link to="/restocking" :class="{ active: $route.path === '/restocking' }">
             {{ t('nav.restocking') }}
@@ -183,6 +183,10 @@ export default {
   --color-border: #e2e8f0;
   --color-border-dark: #cbd5e1;
   --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --nav-height: 64px;
 }
 
 [data-theme="dark"] {
@@ -200,6 +204,7 @@ export default {
   --color-border: #334155;
   --color-border-dark: #475569;
   --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 * {
@@ -237,7 +242,7 @@ body {
   display: flex;
   align-items: center;
   padding: 0 2rem;
-  height: 70px;
+  height: var(--nav-height);
 }
 
 .nav-container > .nav-tabs {
@@ -276,12 +281,12 @@ body {
 }
 
 .nav-tabs a {
-  padding: 0.625rem 1.25rem;
+  padding: 0.5rem 1rem;
   color: var(--color-text-muted);
   text-decoration: none;
   font-weight: 500;
-  font-size: 0.938rem;
-  border-radius: 6px;
+  font-size: 0.875rem;
+  border-radius: var(--radius-sm);
   transition: color 0.15s ease, background 0.15s ease;
   position: relative;
 }
@@ -294,6 +299,8 @@ body {
 .nav-tabs a.active {
   color: var(--color-primary);
   background: var(--color-primary-light);
+  border-left: 3px solid var(--color-primary);
+  padding-left: calc(1rem - 3px);
 }
 
 .nav-tabs a.active::after {
@@ -311,7 +318,7 @@ body {
   max-width: 1600px;
   width: 100%;
   margin: 0 auto;
-  padding: 1.5rem 2rem;
+  padding: 2rem 2.5rem;
 }
 
 .page-header {
@@ -341,14 +348,14 @@ body {
 .stat-card {
   background: var(--color-surface);
   padding: 1.25rem;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .stat-card:hover {
   border-color: var(--color-border-dark);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .stat-label {
@@ -367,25 +374,14 @@ body {
   letter-spacing: -0.025em;
 }
 
-.stat-card.warning .stat-value {
-  color: #ea580c;
-}
-
-.stat-card.success .stat-value {
-  color: #059669;
-}
-
-.stat-card.danger .stat-value {
-  color: #dc2626;
-}
-
-.stat-card.info .stat-value {
-  color: var(--color-primary);
-}
+.stat-card.warning .stat-value { color: #ea580c; }
+.stat-card.success .stat-value { color: #059669; }
+.stat-card.danger .stat-value  { color: #dc2626; }
+.stat-card.info .stat-value    { color: var(--color-primary); }
 
 .card {
   background: var(--color-surface);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: 1.25rem;
   border: 1px solid var(--color-border);
   margin-bottom: 1.25rem;
@@ -450,62 +446,23 @@ tbody tr:hover {
 .badge {
   display: inline-block;
   padding: 0.313rem 0.75rem;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.025em;
 }
 
-.badge.success {
-  background: #d1fae5;
-  color: #065f46;
-}
-
-.badge.warning {
-  background: #fed7aa;
-  color: #92400e;
-}
-
-.badge.danger {
-  background: #fecaca;
-  color: #991b1b;
-}
-
-.badge.info {
-  background: #dbeafe;
-  color: #1e40af;
-}
-
-.badge.increasing {
-  background: #d1fae5;
-  color: #065f46;
-}
-
-.badge.decreasing {
-  background: #fecaca;
-  color: #991b1b;
-}
-
-.badge.stable {
-  background: #e0e7ff;
-  color: #3730a3;
-}
-
-.badge.high {
-  background: #fecaca;
-  color: #991b1b;
-}
-
-.badge.medium {
-  background: #fed7aa;
-  color: #92400e;
-}
-
-.badge.low {
-  background: #dbeafe;
-  color: #1e40af;
-}
+.badge.success   { background: #d1fae5; color: #065f46; }
+.badge.warning   { background: #fed7aa; color: #92400e; }
+.badge.danger    { background: #fecaca; color: #991b1b; }
+.badge.info      { background: #dbeafe; color: #1e40af; }
+.badge.increasing { background: #d1fae5; color: #065f46; }
+.badge.decreasing { background: #fecaca; color: #991b1b; }
+.badge.stable    { background: #e0e7ff; color: #3730a3; }
+.badge.high      { background: #fecaca; color: #991b1b; }
+.badge.medium    { background: #fed7aa; color: #92400e; }
+.badge.low       { background: #dbeafe; color: #1e40af; }
 
 .loading {
   text-align: center;
@@ -519,7 +476,7 @@ tbody tr:hover {
   border: 1px solid #fecaca;
   color: #991b1b;
   padding: 1rem;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   margin: 1rem 0;
   font-size: 0.938rem;
 }
