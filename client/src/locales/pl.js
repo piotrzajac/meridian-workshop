@@ -6,6 +6,7 @@ export default {
     orders: 'Zamówienia',
     finance: 'Finanse',
     demandForecast: 'Prognoza Popytu',
+    restocking: 'Uzupełnienie',
     companyName: 'Catalyst Components',
     subtitle: 'System Zarządzania Magazynem'
   },
@@ -340,6 +341,35 @@ export default {
       avgMonthlyRevenue: 'Średni Miesięczny Przychód',
       totalOrders: 'Łączna Liczba Zamówień (od początku roku)',
       bestQuarter: 'Najlepszy Kwartał'
+    }
+  },
+
+  // Restocking
+  restocking: {
+    title: 'Uzupełnienie',
+    description: 'Rekomendacje zamówień na podstawie poziomów zapasów i popytu',
+    budgetLabel: 'Limit Budżetu',
+    budgetPlaceholder: 'Podaj budżet (opcjonalnie)',
+    applyBudget: 'Zastosuj',
+    clearBudget: 'Wyczyść',
+    noRecommendations: 'Brak pozycji wymagających uzupełnienia dla wybranych filtrów.',
+    summary: {
+      itemsToRestock: 'Pozycje do Uzupełnienia',
+      totalEstimatedCost: 'Szacowany Łączny Koszt',
+      withinBudget: 'W Budżecie',
+      budgetRemaining: 'Pozostały Budżet'
+    },
+    table: {
+      sku: 'SKU',
+      itemName: 'Nazwa Towaru',
+      warehouse: 'Magazyn',
+      onHand: 'Stan Magazynowy',
+      reorderPoint: 'Punkt Ponownego Zamówienia',
+      shortfall: 'Niedobór',
+      recommendedQty: 'Zalecana Ilość',
+      unitCost: 'Koszt Jednostkowy',
+      estimatedCost: 'Szacowany Koszt',
+      demandTrend: 'Trend Popytu'
     }
   },
 

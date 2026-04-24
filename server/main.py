@@ -315,6 +315,76 @@ def get_monthly_trends(warehouse: Optional[str] = None, category: Optional[str] 
     result.sort(key=lambda x: x['month'])
     return result
 
+class RestockingRecommendation(BaseModel):
+    sku: str
+    name: str
+    category: str
+    warehouse: str
+    quantity_on_hand: int
+    reorder_point: int
+    shortfall: int
+    recommended_qty: int
+    unit_cost: float
+    estimated_cost: float
+    demand_trend: str
+    forecasted_demand: Optional[int] = None
+
+@app.get("/api/restocking", response_model=List[RestockingRecommendation])
+def get_restocking_recommendations(
+    warehouse: Optional[str] = None,
+    category: Optional[str] = None,
+    budget: Optional[float] = None
+):
+    """Get restocking recommendations for items below reorder point"""
+    filtered_items = apply_filters(inventory_items, warehouse, category)
+
+    # Keep only items below reorder point
+    shortfall_items = [item for item in filtered_items if item['quantity_on_hand'] < item['reorder_point']]
+
+    # Build SKU -> forecast lookup
+    forecast_lookup = {}
+    for forecast in demand_forecasts:
+        forecast_lookup[forecast['item_sku']] = forecast
+
+    # Build recommendations
+    trend_order = {'increasing': 0, 'stable': 1, 'decreasing': 2, 'unknown': 3}
+    recommendations = []
+    for item in shortfall_items:
+        shortfall = item['reorder_point'] - item['quantity_on_hand']
+        forecast = forecast_lookup.get(item['sku'])
+        demand_trend = forecast['trend'] if forecast else 'unknown'
+        forecasted_demand = forecast['forecasted_demand'] if forecast else None
+
+        recommendations.append(RestockingRecommendation(
+            sku=item['sku'],
+            name=item['name'],
+            category=item['category'],
+            warehouse=item['warehouse'],
+            quantity_on_hand=item['quantity_on_hand'],
+            reorder_point=item['reorder_point'],
+            shortfall=shortfall,
+            recommended_qty=shortfall,
+            unit_cost=item['unit_cost'],
+            estimated_cost=round(shortfall * item['unit_cost'], 2),
+            demand_trend=demand_trend,
+            forecasted_demand=forecasted_demand
+        ))
+
+    # Sort by demand trend priority (increasing first)
+    recommendations.sort(key=lambda x: trend_order.get(x.demand_trend, 3))
+
+    # Apply budget ceiling greedily if provided
+    if budget is not None:
+        capped = []
+        remaining = budget
+        for rec in recommendations:
+            if rec.estimated_cost <= remaining:
+                capped.append(rec)
+                remaining -= rec.estimated_cost
+        recommendations = capped
+
+    return recommendations
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)
