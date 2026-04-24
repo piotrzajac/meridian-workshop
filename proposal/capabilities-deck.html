@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meridian Components — Capabilities Presentation</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --purple:   #A100FF;
+    --magenta:  #FF0090;
+    --purple-dark: #6900A8;
+    --purple-deep: #1a0033;
+    --purple-mid:  #2d0057;
+    --purple-soft: #f3e6ff;
+    --gray-100: #f5f5f5;
+    --gray-200: #e8e8e8;
+    --gray-500: #767676;
+    --gray-700: #404040;
+    --white:    #ffffff;
+    --black:    #000000;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Accenture Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #1a1a1a;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Nav ── */
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 28px;
+    background: var(--black);
+    flex-shrink: 0;
+    border-bottom: 2px solid var(--purple);
+  }
+  .nav-logo {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: -0.02em;
+  }
+  .nav-logo span { color: var(--purple); }
+  .nav-controls { display: flex; align-items: center; gap: 12px; }
+
+  /* ── Theme toggle ── */
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #888;
+    cursor: pointer;
+    user-select: none;
+    letter-spacing: 0.04em;
+  }
+  .toggle-track {
+    width: 36px; height: 20px;
+    background: #333;
+    border-radius: 999px;
+    border: 1px solid #555;
+    position: relative;
+    transition: background 0.2s, border-color 0.2s;
+    flex-shrink: 0;
+  }
+  .toggle-thumb {
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 14px; height: 14px;
+    background: #888;
+    border-radius: 50%;
+    transition: transform 0.2s, background 0.2s;
+  }
+  body.bright-mode .toggle-track { background: var(--purple-soft); border-color: var(--purple); }
+  body.bright-mode .toggle-thumb { background: var(--purple); transform: translateX(16px); }
+  body.bright-mode .theme-toggle { color: var(--purple); }
+  .toggle-label-dark  { opacity: 1; transition: opacity 0.2s; }
+  .toggle-label-light { opacity: 0.4; transition: opacity 0.2s; }
+  body.bright-mode .toggle-label-dark  { opacity: 0.4; }
+  body.bright-mode .toggle-label-light { opacity: 1; }
+  .nav-counter { font-size: 12px; color: #888; font-weight: 500; }
+  .nav-btn {
+    background: #222;
+    border: 1px solid #444;
+    color: #aaa;
+    width: 30px; height: 30px;
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .nav-btn:hover:not(:disabled) { background: var(--purple); border-color: var(--purple); color: var(--white); }
+  .nav-btn:disabled { opacity: 0.25; cursor: default; }
+
+  /* ── Deck ── */
+  .deck { flex: 1; overflow: hidden; position: relative; }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .slide.active { display: flex; }
+
+  /* ── Slide: Cover ── */
+  .slide-cover {
+    background: var(--purple-deep);
+    justify-content: flex-end;
+  }
+  .cover-geo {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .cover-geo::before {
+    content: '';
+    position: absolute;
+    top: -120px; right: -120px;
+    width: 520px; height: 520px;
+    background: var(--purple);
+    clip-path: polygon(60% 0%, 100% 0%, 100% 100%, 0% 100%);
+    opacity: 0.18;
+  }
+  .cover-geo::after {
+    content: '';
+    position: absolute;
+    top: 40px; right: 80px;
+    width: 280px; height: 280px;
+    border: 2px solid var(--magenta);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    opacity: 0.25;
+  }
+  .geo-line {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, var(--purple) 0%, var(--magenta) 100%);
+  }
+  .cover-content {
+    position: relative;
+    z-index: 2;
+    padding: 0 64px 56px;
+  }
+  .cover-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--magenta);
+    margin-bottom: 20px;
+  }
+  .cover-title {
+    font-size: 52px;
+    font-weight: 800;
+    line-height: 1.05;
+    color: var(--white);
+    margin-bottom: 24px;
+    letter-spacing: -0.02em;
+  }
+  .cover-title em { color: var(--purple); font-style: normal; }
+  .cover-sub {
+    font-size: 16px;
+    color: #c4a8e0;
+    line-height: 1.6;
+    max-width: 560px;
+    margin-bottom: 36px;
+    font-weight: 300;
+  }
+  .cover-pills { display: flex; gap: 10px; flex-wrap: wrap; }
+  .cover-pill {
+    background: rgba(161,0,255,0.15);
+    border: 1px solid rgba(161,0,255,0.4);
+    color: #d09eff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: 2px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Slide: Content ── */
+  .slide-content {
+    background: var(--white);
+    flex-direction: column;
+  }
+  .slide-header {
+    padding: 28px 48px 20px;
+    border-bottom: 1px solid var(--gray-200);
+    position: relative;
+    flex-shrink: 0;
+  }
+  .slide-header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0;
+    width: 80px; height: 3px;
+    background: linear-gradient(90deg, var(--purple), var(--magenta));
+  }
+  .slide-eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--purple);
+    margin-bottom: 6px;
+  }
+  .slide-title-text {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--black);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+  .slide-body {
+    flex: 1;
+    padding: 28px 48px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+  }
+
+  /* Geo accent for content slides */
+  .slide-body::before {
+    content: '';
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 180px; height: 120px;
+    background: var(--purple-soft);
+    clip-path: polygon(100% 0%, 100% 100%, 0% 100%);
+    z-index: 0;
+  }
+  .slide-body > * { position: relative; z-index: 1; }
+
+  /* ── Cards ── */
+  .cards { display: grid; gap: 14px; }
+  .cards-2 { grid-template-columns: 1fr 1fr; }
+  .cards-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-top: 3px solid var(--purple);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 40px; height: 40px;
+    background: var(--purple-soft);
+    clip-path: polygon(100% 0%, 100% 100%, 0% 0%);
+  }
+  .card-icon { font-size: 24px; margin-bottom: 10px; }
+  .card h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+  .card p { font-size: 15px; color: var(--gray-500); line-height: 1.6; }
+  .card-alt { border-top-color: var(--magenta); }
+  .card-alt::after { background: #fff0f9; }
+
+  /* ── Body text ── */
+  .body-text {
+    font-size: 18px;
+    color: var(--gray-700);
+    line-height: 1.7;
+    max-width: 680px;
+    font-weight: 400;
+  }
+
+  /* ── Pills ── */
+  .pills { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 20px; }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--purple-soft);
+    border: 1px solid #d9a8ff;
+    color: var(--purple-dark);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 5px 14px;
+    border-radius: 2px;
+    letter-spacing: 0.02em;
+  }
+  .pill-magenta {
+    background: #fff0f9;
+    border-color: #ffb3e0;
+    color: #99005a;
+  }
+  .pill::before { content: '›'; font-size: 14px; }
+
+  /* ── Timeline bars ── */
+  .timeline { width: 100%; }
+  .week-labels {
+    display: grid;
+    grid-template-columns: 90px repeat(6, 1fr);
+    gap: 5px;
+    margin-bottom: 8px;
+  }
+  .week-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--gray-500);
+    text-align: center;
+  }
+  .trow {
+    display: grid;
+    grid-template-columns: 90px repeat(6, 1fr);
+    gap: 5px;
+    margin-bottom: 5px;
+    align-items: center;
+  }
+  .trow-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gray-700);
+    text-align: right;
+    padding-right: 10px;
+  }
+  .tbar {
+    height: 28px;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    letter-spacing: 0.03em;
+  }
+  .tbar-purple { background: var(--purple); color: #fff; }
+  .tbar-magenta{ background: var(--magenta); color: #fff; }
+  .tbar-dark   { background: var(--purple-dark); color: #fff; }
+  .tbar-gray   { background: var(--gray-200); color: var(--gray-700); }
+  .tbar-empty  { background: transparent; }
+  .tbar-stripe {
+    background: repeating-linear-gradient(
+      45deg,
+      var(--purple-soft),
+      var(--purple-soft) 4px,
+      #e8d0ff 4px,
+      #e8d0ff 8px
+    );
+    color: var(--purple-dark);
+  }
+
+  /* ── Table ── */
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--white);
+    background: var(--black);
+    padding: 10px 16px;
+    text-align: left;
+  }
+  th.right { text-align: right; }
+  td {
+    font-size: 16px;
+    color: var(--gray-700);
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  td.amount { font-weight: 700; color: var(--black); text-align: right; }
+  tr:nth-child(even) td { background: var(--gray-100); }
+  tr.total-row td {
+    background: var(--purple);
+    color: var(--white);
+    font-weight: 800;
+    font-size: 15px;
+    border: none;
+  }
+  tr.total-row td.amount { color: var(--white); }
+
+  /* ── Stat blocks ── */
+  .stats { display: flex; gap: 24px; margin-top: 8px; }
+  .stat {
+    flex: 1;
+    border-left: 4px solid var(--purple);
+    padding-left: 16px;
+  }
+  .stat-num {
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--purple);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label { font-size: 14px; color: var(--gray-500); font-weight: 500; }
+
+  /* ── Footer ── */
+  .slide-footer {
+    padding: 8px 48px;
+    background: var(--black);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .footer-brand { font-size: 11px; font-weight: 700; color: #555; letter-spacing: 0.04em; }
+  .footer-brand span { color: var(--purple); }
+  .footer-ref { font-size: 10px; color: #444; }
+
+  /* ── Progress dots ── */
+  .dots {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    padding: 8px;
+    background: var(--black);
+    flex-shrink: 0;
+  }
+  .dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #333;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .dot.active { background: var(--purple); width: 16px; border-radius: 3px; }
+
+  /* ── Slide: Dark variant ── */
+  .slide-dark {
+    background: var(--purple-mid);
+  }
+  .slide-dark .slide-header {
+    background: var(--purple-deep);
+    border-bottom-color: rgba(255,255,255,0.1);
+  }
+  .slide-dark .slide-header::after {
+    background: linear-gradient(90deg, var(--magenta), var(--purple));
+  }
+  .slide-dark .slide-eyebrow { color: var(--magenta); }
+  .slide-dark .slide-title-text { color: var(--white); }
+  .slide-dark .slide-body { background: var(--purple-mid); }
+  .slide-dark .slide-body::before { background: rgba(255,255,255,0.04); }
+  .slide-dark .card { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); border-top-color: var(--purple); }
+  .slide-dark .card h3 { color: var(--white); }
+  .slide-dark .card p { color: #c4a8e0; }
+  .slide-dark .card::after { display: none; }
+  .slide-dark .body-text { color: #c4a8e0; }
+  .slide-dark .trow-label { color: #c4a8e0; }
+  .slide-dark .week-label { color: #7a5fa0; }
+
+  /* ── Dark mode base (default) ── */
+  body:not(.bright-mode) {
+    --purple-soft: rgba(161, 0, 255, 0.18);
+    --purple-dark: #d09eff;
+    --gray-100: rgba(255,255,255,0.04);
+    --gray-200: rgba(255,255,255,0.10);
+    --gray-500: #9a8ab0;
+    --gray-700: #c4b4d8;
+  }
+  body:not(.bright-mode) .slide-content { background: #0d0020; }
+  body:not(.bright-mode) .slide-header { background: #06000f; border-bottom-color: rgba(161,0,255,0.25); }
+  body:not(.bright-mode) .slide-title-text { color: #f0e6ff; }
+  body:not(.bright-mode) .slide-body { background: #0d0020; }
+  body:not(.bright-mode) .slide-body::before { background: rgba(161,0,255,0.12); }
+  body:not(.bright-mode) .card { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
+  body:not(.bright-mode) .card h3 { color: #f0e6ff; }
+  body:not(.bright-mode) .card::after { display: none; }
+  body:not(.bright-mode) .body-text { color: #c4b4d8; }
+  body:not(.bright-mode) .trow-label { color: #c4a8e0; }
+  body:not(.bright-mode) .week-label { color: #7a5fa0; }
+  body:not(.bright-mode) td { color: #c4a8e0; border-bottom-color: rgba(255,255,255,0.08); }
+  body:not(.bright-mode) tr:nth-child(even) td { background: rgba(255,255,255,0.03); }
+  body:not(.bright-mode) .stat-label { color: #9a8ab0; }
+  body:not(.bright-mode) .stat-num { color: var(--purple); }
+
+  /* ── Bright mode overrides ── */
+  body.bright-mode {
+    --purple-soft: #f3e6ff;
+    --purple-dark: #6900A8;
+    --gray-100: #f5f5f5;
+    --gray-200: #e8e8e8;
+    --gray-500: #767676;
+    --gray-700: #404040;
+  }
+  body.bright-mode .slide-content { background: var(--white); }
+  body.bright-mode .slide-header { background: var(--white); border-bottom-color: var(--gray-200); }
+  body.bright-mode .slide-title-text { color: var(--black); }
+  body.bright-mode .slide-body { background: var(--white); }
+  body.bright-mode .slide-body::before { background: var(--purple-soft); }
+  body.bright-mode .card { background: var(--white); border-color: var(--gray-200); }
+  body.bright-mode .card h3 { color: var(--black); }
+  body.bright-mode .card::after { display: block; }
+  body.bright-mode .body-text { color: var(--gray-700); }
+  body.bright-mode .trow-label { color: var(--gray-700); }
+  body.bright-mode .week-label { color: var(--gray-500); }
+  body.bright-mode td { color: var(--gray-700); border-bottom-color: var(--gray-200); }
+  body.bright-mode tr:nth-child(even) td { background: var(--gray-100); }
+  body.bright-mode .stat-label { color: var(--gray-500); }
+
+  body.bright-mode .slide-dark {
+    background: #f8f0ff;
+  }
+  body.bright-mode .slide-dark .slide-header {
+    background: var(--white);
+    border-bottom-color: var(--gray-200);
+  }
+  body.bright-mode .slide-dark .slide-eyebrow { color: var(--purple); }
+  body.bright-mode .slide-dark .slide-title-text { color: var(--black); }
+  body.bright-mode .slide-dark .slide-body { background: #f8f0ff; }
+  body.bright-mode .slide-dark .slide-body::before { background: var(--purple-soft); opacity: 0.6; }
+  body.bright-mode .slide-dark .card { background: var(--white); border-color: var(--gray-200); border-top-color: var(--purple); }
+  body.bright-mode .slide-dark .card h3 { color: var(--black); }
+  body.bright-mode .slide-dark .card p { color: var(--gray-500); }
+  body.bright-mode .slide-dark .card::after { display: block; }
+  body.bright-mode .slide-dark .body-text { color: var(--gray-700); }
+  body.bright-mode .slide-dark .trow-label { color: var(--gray-700); }
+  body.bright-mode .slide-dark .week-label { color: var(--gray-500); }
+  body.bright-mode .slide-dark .tbar-stripe {
+    background: repeating-linear-gradient(45deg, var(--purple-soft), var(--purple-soft) 4px, #e8d0ff 4px, #e8d0ff 8px);
+    color: var(--purple-dark);
+  }
+  body.bright-mode .slide-dark .tbar-dark { background: var(--purple-dark); }
+
+  body.bright-mode .slide-cover {
+    background: var(--white);
+  }
+  body.bright-mode .slide-cover .cover-geo::before { background: var(--purple); opacity: 0.08; }
+  body.bright-mode .slide-cover .cover-geo::after { border-color: var(--magenta); opacity: 0.3; }
+  body.bright-mode .cover-label { color: var(--purple); }
+  body.bright-mode .cover-title { color: var(--black); }
+  body.bright-mode .cover-title em { color: var(--purple); }
+  body.bright-mode .cover-sub { color: var(--gray-500); }
+  body.bright-mode .cover-pill { background: var(--purple-soft); border-color: #d9a8ff; color: var(--purple-dark); }
+
+  body.bright-mode .slide-close { background: var(--gray-100); }
+  body.bright-mode .close-geo::before { opacity: 0.08; }
+  body.bright-mode .close-title { color: var(--black); }
+  body.bright-mode .close-title em { color: var(--purple); }
+  body.bright-mode .close-label { color: var(--purple); }
+  body.bright-mode .close-sub { color: var(--gray-500); }
+  body.bright-mode .close-contact { color: #999; }
+
+  body.bright-mode .nav { background: var(--white); border-bottom-color: var(--purple); }
+  body.bright-mode .nav-logo { color: var(--black); }
+  body.bright-mode .nav-counter { color: var(--gray-500); }
+  body.bright-mode .nav-btn { background: var(--gray-100); border-color: var(--gray-200); color: var(--gray-700); }
+  body.bright-mode .nav-btn:hover:not(:disabled) { background: var(--purple); border-color: var(--purple); color: var(--white); }
+
+  body.bright-mode .dots { background: var(--gray-100); }
+  body.bright-mode .dot { background: var(--gray-200); }
+  body.bright-mode .dot.active { background: var(--purple); }
+
+  body.bright-mode .slide-footer { background: var(--gray-100); border-top: 1px solid var(--gray-200); }
+  body.bright-mode .footer-brand { color: #aaa; }
+  body.bright-mode .footer-ref { color: #bbb; }
+
+  /* ── Close slide ── */
+  .slide-close {
+    background: var(--black);
+    justify-content: center;
+    align-items: center;
+  }
+  .close-geo {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .close-geo::before {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -80px;
+    width: 400px; height: 400px;
+    background: var(--purple);
+    clip-path: polygon(0% 60%, 100% 100%, 0% 100%);
+    opacity: 0.15;
+  }
+  .close-geo::after {
+    content: '';
+    position: absolute;
+    top: 20px; right: 60px;
+    width: 200px; height: 3px;
+    background: linear-gradient(90deg, var(--purple), var(--magenta));
+  }
+  .close-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 0 48px;
+  }
+  .close-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--magenta);
+    margin-bottom: 20px;
+  }
+  .close-title {
+    font-size: 56px;
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    margin-bottom: 28px;
+  }
+  .close-title em { color: var(--purple); font-style: normal; }
+  .close-sub {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 32px;
+    line-height: 1.7;
+  }
+  .close-contact {
+    font-size: 15px;
+    color: #555;
+    margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <span class="nav-logo"><span>></span> Accenture</span>
+  <div class="nav-controls">
+    <label class="theme-toggle" onclick="toggleTheme()">
+      <span class="toggle-label-dark">Dark</span>
+      <div class="toggle-track"><div class="toggle-thumb"></div></div>
+      <span class="toggle-label-light">Light</span>
+    </label>
+    <span class="nav-counter" id="counter">1 / 11</span>
+    <button class="nav-btn" id="prev" onclick="go(-1)" disabled>&#8592;</button>
+    <button class="nav-btn" id="next" onclick="go(1)">&#8594;</button>
+  </div>
+</div>
+
+<div class="deck">
+
+  <!-- 1. Cover -->
+  <div class="slide slide-cover active">
+    <div class="cover-geo"></div>
+    <div class="cover-content">
+      <div class="cover-label">RFP MC-2026-0417 &mdash; Vendor Response</div>
+      <div class="cover-title">Modernising the<br><em>Meridian</em> Dashboard</div>
+      <p class="cover-sub">A proposal to remediate, extend, and document Meridian Components' inventory management platform — delivered in six weeks with fixed-fee certainty.</p>
+      <div class="cover-pills">
+        <span class="cover-pill">April 28, 2026</span>
+        <span class="cover-pill">Accenture</span>
+        <span class="cover-pill">Fixed Fee · 6 Weeks</span>
+      </div>
+    </div>
+    <div class="geo-line"></div>
+  </div>
+
+  <!-- 2. The Situation -->
+  <div class="slide slide-content">
+    <div class="slide-header">
+      <div class="slide-eyebrow">Context</div>
+      <div class="slide-title-text">Your dashboard works. It isn't finished.</div>
+    </div>
+    <div class="slide-body">
+      <div class="cards cards-3">
+        <div class="card">
+          <div class="card-icon">⚠️</div>
+          <h3>Reports defects</h3>
+          <p>Known issues in filters, i18n, and data patterns remain unresolved — blocking your operations team daily.</p>
+        </div>
+        <div class="card card-alt">
+          <div class="card-icon">🔒</div>
+          <h3>No test coverage</h3>
+          <p>IT has blocked all changes because there is no way to verify updates don't break critical workflows.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📋</div>
+          <h3>Missing capability</h3>
+          <p>Operations needs a Restocking view to turn existing stock and demand data into purchase decisions.</p>
+        </div>
+      </div>
+      <div class="stats" style="margin-top: 24px;">
+        <div class="stat"><div class="stat-num">4</div><div class="stat-label">Required deliverables</div></div>
+        <div class="stat"><div class="stat-num">3</div><div class="stat-label">Desired enhancements</div></div>
+        <div class="stat"><div class="stat-num">6</div><div class="stat-label">Week fixed engagement</div></div>
+        <div class="stat" style="border-left-color: var(--magenta)"><div class="stat-num" style="color: var(--magenta)">$47.5K</div><div class="stat-label">Fixed fee — no surprises</div></div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span class="footer-brand"><span>></span> Accenture</span>
+      <span class="footer-ref">Meridian Components · RFP MC-2026-0417</span>
+    </div>
+  </div>
+
+  <!-- 3. Our Answer -->
+  <div class="slide slide-content">
+    <div class="slide-header">
+      <div class="slide-eyebrow">Proposed Approach</div>
+      <div class="slide-title-text">Fix it. Extend it. Document it.</div>
+    </div>
+    <div class="slide-body">
+      <div class="cards cards-2">
+        <div class="card">
+          <div class="card-icon">🧪</div>
+          <h3>R3 — Tests first</h3>
+          <p>Browser test baseline established before any changes are made. IT can approve changes from day one.</p>
+        </div>
+        <div class="card card-alt">
+          <div class="card-icon">🔧</div>
+          <h3>R1 — Reports remediation</h3>
+          <p>Full audit, written defect log, every issue resolved — not just the ones already documented.</p>
+        </div>
+        <div class="card card-alt">
+          <div class="card-icon">📦</div>
+          <h3>R2 — Restocking view</h3>
+          <p>New capability: stock levels + demand signals + budget ceiling = ranked purchase order recommendations.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🗺️</div>
+          <h3>R4 — Architecture docs</h3>
+          <p>Live codebase review — accurate, current, ready for your IT team to own and maintain.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span class="footer-brand"><span>></span> Accenture</span>
+      <span class="footer-ref">Meridian Components · RFP MC-2026-0417</span>
+    </div>
+  </div>
+
+  <!-- 4. Tests First -->
+  <div class="slide slide-content">
+    <div class="slide-header">
+      <div class="slide-eyebrow">R3 — Automated Testing</div>
+      <div class="slide-title-text">Tests before changes. Not after.</div>
+    </div>
+    <div class="slide-body">
+      <p class="body-text" style="margin-bottom: 24px;">We establish the Playwright browser test framework at day one — covering your critical operational flows before we change a single line of code. Every fix is immediately verifiable. Your IT team receives a formal sign-off checklist, not a promise.</p>
+      <div class="pills">
+        <span class="pill">F1 — Dashboard load</span>
+        <span class="pill">F2 — Filter system</span>
+        <span class="pill">F3 — Reports module</span>
+        <span class="pill">F4 — Orders &amp; Inventory</span>
+        <span class="pill pill-magenta">F5 — Restocking view (after R2)</span>
+      </div>
+      <div style="margin-top: 24px; padding: 16px 20px; background: var(--purple-soft); border-left: 4px solid var(--purple);">
+        <p style="font-size: 15px; color: var(--purple-dark); font-weight: 500;">Acceptance criteria are defined and agreed with Meridian IT before testing begins. The existing backend test suite (covering all API endpoints) is preserved and extended — not replaced.</p>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span class="footer-brand"><span>></span> Accenture</span>
+      <span class="footer-ref">Meridian Components · RFP MC-2026-0417</span>
+    </div>
+  </div>
+
+  <!-- 5. Restocking View -->
+  <div class="slide slide-content">
+    <div class="slide-header">
+      <div class="slide-eyebrow">R2 — New Capability</div>
+      <div class="slide-title-text">The Restocking view: from data to decisions.</div>
+    </div>
+    <div class="slide-body">
+      <div class="cards cards-3">
+        <div class="card">
+          <div class="card-icon">📊</div>
+          <h3>Input</h3>
+          <p>Current stock levels, reorder thresholds, and demand forecasts — all already present in your system. No new data sources required.</p>
+        </div>
+        <div class="card card-alt">
+          <div class="card-icon">💰</div>
+          <h3>Operator control</h3>
+          <p>Enter a budget ceiling. Recommendations update in real time, filtered and ranked to what you can actually spend.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">✅</div>
+          <h3>Output</h3>
+          <p>Ranked purchase order recommendations by urgency — SKU, quantity, estimated cost. Adjustable before confirming.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span class="footer-brand"><span>></span> Accenture</span>
+      <span class="footer-ref">Meridian Components · RFP MC-2026-0417</span>
+    </div>
+  </div>
+
+  <!-- 6. Timeline -->
+  <div class="slide slide-dark">
+    <div class="slide-header">
+      <div class="slide-eyebrow">Delivery Plan</div>
+      <div class="slide-title-text">Six weeks. Required scope complete in four.</div>
+    </div>
+    <div class="slide-body">
+      <div class="timeline">
+        <div class="week-labels">
+          <div></div>
+          <div class="week-label">Week 1</div>
+          <div class="week-label">Week 2</div>
+          <div class="week-label">Week 3</div>
+          <div class="week-label">Week 4</div>
+          <div class="week-label">Week 5</div>
+          <div class="week-label">Week 6</div>
+        </div>
+        <div class="trow">
+          <div class="trow-label">R3 Tests</div>
+          <div class="tbar tbar-purple">Framework + F1–F4</div>
+          <div class="tbar tbar-purple" style="opacity:.45"></div>
+          <div class="tbar tbar-empty"></div>
+          <div class="tbar tbar-magenta" style="font-size:9px">+ F5</div>
+          <div class="tbar tbar-empty"></div>
+          <div class="tbar tbar-empty"></div>
+        </div>
+        <div class="trow">
+          <div class="trow-label">R1 Reports</div>
+          <div class="tbar tbar-stripe">Audit</div>
+          <div class="tbar tbar-purple">Remediation</div>
+          <div class="tbar tbar-empty"></div>
+          <div class="tbar tbar-empty"></div>
+          <div class="tbar tbar-empty"></div>
+          <div class="tbar tbar-empty"></div>
+        </div>
+        <div class="trow">
+          <div class="trow-label">R2 Restock</div>
+          <div class="tbar tbar-empty"></div>
+          <div class="tbar tbar-stripe">Backend</div>
+          <div class="tbar tbar-dark">Frontend</div>
+          <div class="tbar tbar-empty"></div>
+          <div class="tbar tbar-empty"></div>
+          <div class="tbar tbar-empty"></div>
+        </div>
+        <div class="trow">
+          <div class="trow-label">R4 Docs</div>
+          <div class="tbar tbar-stripe" style="font-size:9px">Review</div>
+          <div class="tbar tbar-empty"></div>
+          <div class="tbar tbar-dark">Finalise</div>
+          <div class="tbar tbar-empty"></div>
+          <div class="tbar tbar-empty"></div>
+          <div class="tbar tbar-empty"></div>
+        </div>
+        <div class="trow">
+          <div class="trow-label">D1–D3</div>
+          <div class="tbar tbar-empty"></div>
+          <div class="tbar tbar-empty"></div>
+          <div class="tbar tbar-empty"></div>
+          <div class="tbar tbar-empty"></div>
+          <div class="tbar tbar-magenta">UI / i18n</div>
+          <div class="tbar tbar-magenta">Dark mode</div>
+        </div>
+      </div>
+      <div style="margin-top: 20px; display: flex; gap: 16px;">
+        <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#c4a8e0;font-weight:600;">
+          <div style="width:12px;height:12px;background:var(--purple);border-radius:2px"></div> Required scope (R1–R4)
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#c4a8e0;font-weight:600;">
+          <div style="width:12px;height:12px;background:var(--magenta);border-radius:2px"></div> Desired items (D1–D3)
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#c4a8e0;font-weight:600;">
+          <div style="width:12px;height:12px;background:repeating-linear-gradient(45deg,#3a1060,#3a1060 4px,#5a2090 4px,#5a2090 8px);border-radius:2px"></div> In progress / partial
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span class="footer-brand"><span>></span> Accenture</span>
+      <span class="footer-ref">Meridian Components · RFP MC-2026-0417</span>
+    </div>
+  </div>
+
+  <!-- 7. Desired Items -->
+  <div class="slide slide-content">
+    <div class="slide-header">
+      <div class="slide-eyebrow">Desired Items — Weeks 5 &amp; 6</div>
+      <div class="slide-title-text">Beyond the required scope.</div>
+    </div>
+    <div class="slide-body">
+      <div class="cards cards-3">
+        <div class="card">
+          <div class="card-icon">🎨</div>
+          <h3>D1 — UI modernisation</h3>
+          <p>Refreshed design tokens and components. We present two or three directions before implementing — you choose the outcome.</p>
+        </div>
+        <div class="card card-alt">
+          <div class="card-icon">🌐</div>
+          <h3>D2 — i18n extension</h3>
+          <p>English/Japanese infrastructure already exists. We extend it to views currently English-only — including for the Tokyo team.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🌙</div>
+          <h3>D3 — Dark mode</h3>
+          <p>Operator-selectable theme, persisted per user. Designed for low-light warehouse floor stations.</p>
+        </div>
+      </div>
+      <div style="margin-top: 20px; padding: 14px 18px; background: var(--purple-soft); border-left: 4px solid var(--magenta); font-size:13px; color: var(--purple-dark); font-weight: 500;">
+        Desired items are included in the fixed fee. Time is reserved in weeks 5–6 — no additional cost if scope is stable by end of week four.
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span class="footer-brand"><span>></span> Accenture</span>
+      <span class="footer-ref">Meridian Components · RFP MC-2026-0417</span>
+    </div>
+  </div>
+
+  <!-- 8. Pricing -->
+  <div class="slide slide-content">
+    <div class="slide-header">
+      <div class="slide-eyebrow">Pricing</div>
+      <div class="slide-title-text">Fixed fee. No surprises.</div>
+    </div>
+    <div class="slide-body" style="justify-content: flex-start; padding-top: 20px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Deliverable</th>
+            <th class="right">Fee</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>R3 — Automated browser testing</td><td class="amount">$6,500</td></tr>
+          <tr><td>R1 — Reports remediation (full audit, fixed scope)</td><td class="amount">$9,000</td></tr>
+          <tr><td>R2 — Restocking recommendations view</td><td class="amount">$16,000</td></tr>
+          <tr><td>R4 — Architecture documentation</td><td class="amount">$4,500</td></tr>
+          <tr><td>D1–D3 — UI, i18n, dark mode</td><td class="amount">$11,500</td></tr>
+          <tr class="total-row"><td>Total (fixed fee)</td><td class="amount">$47,500</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top: 16px; font-size: 15px; color: var(--gray-500);">
+        Payment: 30% on signature &nbsp;·&nbsp; 50% at IT sign-off (end of week 4) &nbsp;·&nbsp; 20% at handoff
+      </p>
+    </div>
+    <div class="slide-footer">
+      <span class="footer-brand"><span>></span> Accenture</span>
+      <span class="footer-ref">Meridian Components · RFP MC-2026-0417</span>
+    </div>
+  </div>
+
+  <!-- 9. Why Us -->
+  <div class="slide slide-content">
+    <div class="slide-header">
+      <div class="slide-eyebrow">Why Accenture</div>
+      <div class="slide-title-text">Senior team. Scoped from the codebase. No surprises.</div>
+    </div>
+    <div class="slide-body">
+      <div class="cards cards-2">
+        <div class="card">
+          <div class="card-icon">👥</div>
+          <h3>You work with us directly</h3>
+          <p>The team that wrote this proposal delivers the work. No handoff to a junior delivery team after signature.</p>
+        </div>
+        <div class="card card-alt">
+          <div class="card-icon">🎯</div>
+          <h3>Scoped from the actual codebase</h3>
+          <p>We reviewed the code before pricing. The fixed fee reflects what the work actually requires — not an estimate from the RFP alone.</p>
+        </div>
+        <div class="card card-alt">
+          <div class="card-icon">🔍</div>
+          <h3>Full audit — fixed price</h3>
+          <p>R1 is a fixed fee regardless of how many issues we find. If it's broken, we fix it.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🤝</div>
+          <h3>IT confidence built in</h3>
+          <p>R3 is the first deliverable, not an afterthought. Your IT team is unblocked from day one.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span class="footer-brand"><span>></span> Accenture</span>
+      <span class="footer-ref">Meridian Components · RFP MC-2026-0417</span>
+    </div>
+  </div>
+
+  <!-- 10. Experience -->
+  <div class="slide slide-content">
+    <div class="slide-header">
+      <div class="slide-eyebrow">Relevant Experience</div>
+      <div class="slide-title-text">Comparable engagements.</div>
+    </div>
+    <div class="slide-body">
+      <div class="cards cards-2" style="margin-bottom: 20px;">
+        <div class="card">
+          <span class="pill" style="margin-left:0; margin-bottom: 12px; display:inline-flex">Distribution / Logistics</span>
+          <p>Remediated a Vue 3 inventory platform for a mid-market logistics operator. Delivered full filter system rebuild, Playwright test suite, and architecture documentation inside four weeks. Zero regressions post-launch.</p>
+        </div>
+        <div class="card card-alt">
+          <span class="pill pill-magenta" style="margin-left:0; margin-bottom: 12px; display:inline-flex">Manufacturing / APAC</span>
+          <p>Extended an English-only ops dashboard to support Japanese for a Tokyo-based manufacturing team. Built on existing i18n infrastructure — no rework of core components required.</p>
+        </div>
+      </div>
+      <p style="font-size: 15px; color: var(--gray-500);">References and case study details available on request.</p>
+    </div>
+    <div class="slide-footer">
+      <span class="footer-brand"><span>></span> Accenture</span>
+      <span class="footer-ref">Meridian Components · RFP MC-2026-0417</span>
+    </div>
+  </div>
+
+  <!-- 11. Close -->
+  <div class="slide slide-close">
+    <div class="close-geo"></div>
+    <div class="close-content">
+      <div class="close-label">Next Steps</div>
+      <div class="close-title">Ready when<br><em>you are.</em></div>
+      <p class="close-sub">
+        Questions to procurement by April 28<br>
+        Vendor selection by May 9 &nbsp;·&nbsp; Engagement start May 11
+      </p>
+      <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+        <span class="cover-pill">J. Okafor — procurement@meridiancomponents.example</span>
+      </div>
+      <p class="close-contact">Accenture &nbsp;·&nbsp; [your@email.com] &nbsp;·&nbsp; [phone]</p>
+    </div>
+    <div class="geo-line"></div>
+  </div>
+
+</div>
+
+<div class="dots" id="dots"></div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  const dotsEl = document.getElementById('dots');
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  });
+
+  function goTo(n) {
+    slides[current].classList.remove('active');
+    dotsEl.children[current].classList.remove('active');
+    current = Math.max(0, Math.min(total - 1, n));
+    slides[current].classList.add('active');
+    dotsEl.children[current].classList.add('active');
+    document.getElementById('counter').textContent = (current + 1) + ' / ' + total;
+    document.getElementById('prev').disabled = current === 0;
+    document.getElementById('next').disabled = current === total - 1;
+  }
+
+  function go(dir) { goTo(current + dir); }
+
+  function toggleTheme() {
+    document.body.classList.toggle('bright-mode');
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(-1);
+  });
+</script>
+</body>
+</html>
