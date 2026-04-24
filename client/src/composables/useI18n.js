@@ -1,10 +1,12 @@
 import { ref, computed } from 'vue'
 import en from '../locales/en'
 import ja from '../locales/ja'
+import pl from '../locales/pl'
 
 const translations = {
   en,
-  ja
+  ja,
+  pl
 }
 
 // Load saved locale from localStorage, default to 'en'
@@ -13,7 +15,9 @@ const currentLocale = ref(savedLocale)
 
 // Currency is automatically set based on locale (en -> USD, ja -> JPY)
 const currentCurrency = computed(() => {
-  return currentLocale.value === 'ja' ? 'JPY' : 'USD'
+  if (currentLocale.value === 'ja') return 'JPY'
+  if (currentLocale.value === 'pl') return 'PLN'
+  return 'USD'
 })
 
 export function useI18n() {
@@ -69,7 +73,8 @@ export function useI18n() {
   const localeName = computed(() => {
     const names = {
       en: 'English',
-      ja: '日本語'
+      ja: '日本語',
+      pl: 'Polski'
     }
     return names[currentLocale.value] || currentLocale.value
   })
@@ -92,6 +97,15 @@ export function useI18n() {
 
   // Translate warehouse names
   const translateWarehouse = (warehouseName) => {
+    if (currentLocale.value === 'pl') {
+      const cityMap = {
+        'San Francisco': 'San Francisco',
+        'London': 'Londyn',
+        'Tokyo': 'Tokio'
+      }
+      return cityMap[warehouseName] || warehouseName
+    }
+
     if (currentLocale.value === 'ja') {
       // Handle city names
       const cityMap = {
