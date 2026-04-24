@@ -7,6 +7,7 @@ export default {
     finance: 'Finanse',
     demandForecast: 'Prognoza Popytu',
     restocking: 'Uzupełnienie',
+    reports: 'Raporty',
     companyName: 'Catalyst Components',
     subtitle: 'System Zarządzania Magazynem'
   },
