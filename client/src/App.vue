@@ -29,6 +29,7 @@
             {{ t('nav.restocking') }}
           </router-link>
         </nav>
+        <DarkModeToggle />
         <LanguageSwitcher />
         <ProfileMenu
           @show-profile-details="showProfileDetails = true"
@@ -67,6 +68,7 @@ import ProfileMenu from './components/ProfileMenu.vue'
 import ProfileDetailsModal from './components/ProfileDetailsModal.vue'
 import TasksModal from './components/TasksModal.vue'
 import LanguageSwitcher from './components/LanguageSwitcher.vue'
+import DarkModeToggle from './components/DarkModeToggle.vue'
 
 export default {
   name: 'App',
@@ -75,7 +77,8 @@ export default {
     ProfileMenu,
     ProfileDetailsModal,
     TasksModal,
-    LanguageSwitcher
+    LanguageSwitcher,
+    DarkModeToggle
   },
   setup() {
     const { currentUser } = useAuth()
@@ -184,6 +187,24 @@ export default {
   --radius-sm: 6px;
   --radius-md: 10px;
   --nav-height: 64px;
+}
+
+[data-theme="dark"] {
+  --color-primary: #3b82f6;
+  --color-primary-light: #1e3a5f;
+  --color-bg: #0f172a;
+  --color-surface: #1e293b;
+  --color-surface-muted: #0f172a;
+  --color-surface-hover: #334155;
+  --color-text: #f1f5f9;
+  --color-text-dark: #f8fafc;
+  --color-text-muted: #94a3b8;
+  --color-text-secondary: #cbd5e1;
+  --color-text-tertiary: #94a3b8;
+  --color-border: #334155;
+  --color-border-dark: #475569;
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 * {
